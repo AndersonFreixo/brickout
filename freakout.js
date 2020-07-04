@@ -1,5 +1,6 @@
 const PAD_HEIGHT = 10;
 const PAD_WIDTH = 75;
+
 const BALL_RAD = 10;
 const START_SPEED = 2;
 
@@ -7,6 +8,8 @@ const DIR_UP = -1;
 const DIR_DOWN = 1;
 const DIR_LEFT = -1;
 const DIR_RIGHT = 1;
+
+const START_LIVES = 3;
 
 class Paddle{
   constructor(x, y, height, width, color){
@@ -21,7 +24,9 @@ class Paddle{
     ctx.beginPath();
     ctx.rect(this.x, this.y, this.width, this.height);
     ctx.fillStyle = this.color;
+    ctx.strokeStyle = "#000000";
     ctx.fill();
+    ctx.stroke();
     ctx.closePath();
   }
 
@@ -56,9 +61,11 @@ class Ball{
 
   render(canvas, ctx){
     ctx.beginPath();
-    ctx.fillStyle = `rgb(230, 0, 5)`;
+    ctx.fillStyle = "#ffffff";
+    ctx.strokeStyle = "#000000";
     ctx.arc(this.x, this.y, this.radius, 0, 2*Math.PI);
     ctx.fill();
+    ctx.stroke();
     ctx.closePath();
   }
 
@@ -87,10 +94,36 @@ class Ball{
   }
 }
 
+class Brick{
+  constructor(x, y, height, width, color){
+    this.x = x;
+    this.y = y;
+    this.height = height;
+    this.width = width;
+    this.color = color;
+    this.status = 1;
+  }
+
+  render(canvas, ctx){
+    ctx.beginPath();
+    ctx.rect(this.x, this.y, this.width, this.height);
+    ctx.strokeStyle = "#000000";
+    ctx.fillStyle = this.color;
+    ctx.fill();
+    ctx.stroke();
+    ctx.closePath();
+  }
+
+  update(foo){
+    //To be implemented.
+  }
+}
+
+
 function isColliding(ent1, ent2){
 
-  /*If "end x position" (x+width) of entity 1 is greater than
-  start x position of entity 2 (x) and lesser than end x position of entity 2
+  /*If "end of x position" (x+width) of entity 1 is greater than
+  start of x position of entity 2 (x) and lesser than end of x position of entity 2
   OR the opposite, than they share some position in X.
   If this is NOT the case, return false.*/
 
@@ -105,6 +138,7 @@ function isColliding(ent1, ent2){
 
   return true;
 }
+
 var canvas = document.getElementById("myCanvas");
 canvas.style.cursor = "None";
 var ctx = canvas.getContext("2d");
@@ -120,28 +154,36 @@ var ball = new Ball(x       = canvas.width/2,
                     radius  = BALL_RAD,
                     color   = `rgb(230, 0, 5)`);
 
-var score = 0;
-var lives = 3;
+var events = {rightPressed: false, leftPressed: false, relativeX: 0};
+var gameState = {lives: START_LIVES, score: 0};
 
-var brickRowCount = 3;
-var brickColumnCount = 5;
-var brickWidth = 75;
-var brickHeight = 20;
-var brickPadding = 10;
-var brickOffsetTop = 30;
-var brickOffsetLeft = 30;
+gameState.render = function(canvas, ctx){
+  ctx.font = "16px Arial";
+  ctx.fillStyle = "#FF95DD";
+  ctx.fillText("Lives: "+this.lives, canvas.width-65, canvas.height-10);
+  ctx.fillText("Score: "+this.score, 8, canvas.height-10);
+}
+
+
+
+var brickRowCount = 5;
+var brickColumnCount = 6;
+var brickWidth = canvas.width/6;
+var brickHeight = canvas.height/20;
 
 var bricks = [];
-
-//initialize brick matrix
+/*Initialize bricks*/
 for (var c = 0; c < brickColumnCount; c++){
-  bricks[c] = [];
   for (var r = 0; r < brickRowCount; r++){
-    bricks[c][r] = { x: 0, y:0, status:1 };
+    brick = new Brick(x       = c * brickWidth,
+                      y       = r * brickHeight,
+                      height  = brickHeight,
+                      width   = brickWidth,
+                      color   = `rgb(${50+c*2}, 100, ${100+r*20})`);
+    bricks.push(brick);
   }
 }
 
-var events = {rightPressed: false, leftPressed: false, relativeX: 0}
 
 document.addEventListener("mousemove", mouseMoveHandler, false);
 document.addEventListener("keydown", keyDownHandler, false);
@@ -171,56 +213,31 @@ function keyUpHandler(e){
 }
 
 function collisionDetection(){
-  for (var c = 0; c <brickColumnCount; c++){
-    for (var r = 0; r < brickRowCount; r++){
-      var b = bricks[c][r];
-      if (b.status == 1){
-        if (ball.x > b.x && ball.x < b.x+brickWidth && ball.y > b.y && ball.y < b.y+brickHeight){
-          score += 10;
-          b.status = 0;
-          ball.dy = -ball.dy;
-          if (score/10 == brickRowCount*brickColumnCount){
-            alert("YOU WIN, CONGRATULATIONS!");
-            document.location.reload();
-          }
-        }   // if collision
-      } //if status
-    }//for r
-  } // for c
-} //func
+  for (brick of bricks){
+    if (brick.status == 1){
+      if(isColliding(brick, ball.getRectangle())){
+        gameState.score += 10;
+        brick.status = 0;
+        ball.changeDirVertical();
+        if (gameState.score/10 == brickRowCount*brickColumnCount){
+          alert("YOU WIN, CONGRATULATIONS!");
+          document.location.reload();
+        }
 
-
-function drawLives(){
-  ctx.font = "16px Arial";
-  ctx.fillStyle = "#0095DD";
-  ctx.fillText("Lives: "+lives, canvas.width-65, 20);
-}
-
-function drawScore(){
-  ctx.font = "16px Arial";
-  ctx.fillStyle = "#0095DD";
-  ctx.fillText("Score: "+score, 8, 20);
-}
-
-function drawBricks(){
-  for (var c = 0; c < brickColumnCount; c++){
-    for (var r = 0; r < brickRowCount; r++){
-      if (bricks[c][r].status == 0) continue;
-      var brickX = (c*(brickWidth+brickPadding))+brickOffsetLeft;
-      var brickY = (r*(brickHeight+brickPadding))+brickOffsetTop;
-      bricks[c][r].x = brickX;
-      bricks[c][r].y = brickY;
-      ctx.beginPath();
-      ctx.rect(brickX, brickY, brickWidth, brickHeight);
-      ctx.fillStyle = "#0095DD";
-      ctx.fill();
-      ctx.closePath();
+      }
     }
   }
 }
 
+function renderBricks(){
+  for (brick of bricks){
+    if (brick.status == 1) brick.render(canvas, ctx);
+  }
 
-function draw(){
+}
+
+
+function run(){
     if(canvas.getContext){
         /*updates*/
 
@@ -231,10 +248,8 @@ function draw(){
 
         paddle.render(canvas, ctx);
         ball.render(canvas, ctx);
-
-        drawBricks();
-        drawScore();
-        drawLives();
+        renderBricks();
+        gameState.render(canvas, ctx);
 
         /*Collision detection*/
         collisionDetection(); //bricks detection
@@ -252,8 +267,8 @@ function draw(){
           ball.changeDirVertical();
         }
         else if (ball.y > canvas.height){
-            if (lives > 0){
-              lives--;
+            if (gameState.lives > 0){
+              gameState.lives--;
               ball.x = canvas.width/2;
               ball.y = canvas.height -30;
               ball.dx = DIR_RIGHT;
@@ -269,7 +284,7 @@ function draw(){
     else{
         document.write("Oooops, no canvas!");
     }
-    requestAnimationFrame(draw);
+    requestAnimationFrame(run);
 }
 
-draw();
+run();
