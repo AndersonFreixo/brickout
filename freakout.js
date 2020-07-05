@@ -1,123 +1,7 @@
 const PAD_HEIGHT = 10;
 const PAD_WIDTH = 75;
-
 const BALL_RAD = 10;
-const START_SPEED = 2;
-
-const DIR_UP = -1;
-const DIR_DOWN = 1;
-const DIR_LEFT = -1;
-const DIR_RIGHT = 1;
-
 const START_LIVES = 3;
-
-class Paddle{
-  constructor(x, y, height, width, color){
-    this.x = x;
-    this.y = y;
-    this.height = height;
-    this.width = width;
-    this.color = color;
-  }
-
-  render(canvas, ctx){
-    ctx.beginPath();
-    ctx.rect(this.x, this.y, this.width, this.height);
-    ctx.fillStyle = this.color;
-    ctx.strokeStyle = "#000000";
-    ctx.fill();
-    ctx.stroke();
-    ctx.closePath();
-  }
-
-  update(e){
-    if (e.relativeX > 0 && e.relativeX < canvas.width){
-      this.x = e.relativeX - this.width/2;
-    }
-    if (e.rightPressed == true) this.x += 7;
-    if (e.leftPressed == true) this.x -= 7;
-  }
-}
-
-class Ball{
-  constructor(x, y, radius, color){
-    this.x = x;
-    this.y = y;
-    this.dx = DIR_RIGHT;
-    this.dy = DIR_UP;
-    this.speed = START_SPEED;
-    this.radius = radius;
-    this.color = color;
-  }
-
-  /*Collision is evaluated as if the ball is a rectangle.
-    So width and height are needed.*/
-  getRectangle(){
-    return {x:      this.x - this.radius,
-            y:      this.y - this.radius,
-            width:  radius *2,
-            height: radius *2};
-  }
-
-  render(canvas, ctx){
-    ctx.beginPath();
-    ctx.fillStyle = "#ffffff";
-    ctx.strokeStyle = "#000000";
-    ctx.arc(this.x, this.y, this.radius, 0, 2*Math.PI);
-    ctx.fill();
-    ctx.stroke();
-    ctx.closePath();
-  }
-
-  update(){
-    this.x += this.dx*this.speed;
-    this.y += this.dy*this.speed;
-  }
-
-  changeDirHorizontal(){
-    this.dx = -this.dx;
-  }
-
-  changeDirVertical(){
-    this.dy = -this.dy;
-  }
-
-  checkWallCollision(canvas){
-    //sides detection
-    if (this.x > canvas.width - this.radius || this.x < this.radius){
-        this.changeDirHorizontal();
-    }
-    //top detection
-    if (this.y  < this.radius){
-        this.changeDirVertical();
-    }
-  }
-}
-
-class Brick{
-  constructor(x, y, height, width, color){
-    this.x = x;
-    this.y = y;
-    this.height = height;
-    this.width = width;
-    this.color = color;
-    this.status = 1;
-  }
-
-  render(canvas, ctx){
-    ctx.beginPath();
-    ctx.rect(this.x, this.y, this.width, this.height);
-    ctx.strokeStyle = "#000000";
-    ctx.fillStyle = this.color;
-    ctx.fill();
-    ctx.stroke();
-    ctx.closePath();
-  }
-
-  update(foo){
-    //To be implemented.
-  }
-}
 
 
 function isColliding(ent1, ent2){
@@ -138,9 +22,21 @@ function isColliding(ent1, ent2){
 
   return true;
 }
+/*
+var screen = document.getElementById("myCanvas");
+screen.style.cursor = "None";
+var screenCtx = screen.getContext("2d");
 
+
+var canvas = document.createElement("canvas");
+canvas.height = screen.height-20;
+canvas.width = screen.width;*/
+
+/**************tmp***************/
 var canvas = document.getElementById("myCanvas");
 canvas.style.cursor = "None";
+/********************************/
+
 var ctx = canvas.getContext("2d");
 
 var paddle = new Paddle(x       = (canvas.width - PAD_WIDTH)/2,
@@ -158,10 +54,13 @@ var events = {rightPressed: false, leftPressed: false, relativeX: 0};
 var gameState = {lives: START_LIVES, score: 0};
 
 gameState.render = function(canvas, ctx){
+//  ctx.fillStyle = "#000000";
+//  ctx.rect(0, 0, canvas.width, 20);
+//  ctx.fill();
   ctx.font = "16px Arial";
-  ctx.fillStyle = "#FF95DD";
-  ctx.fillText("Lives: "+this.lives, canvas.width-65, canvas.height-10);
-  ctx.fillText("Score: "+this.score, 8, canvas.height-10);
+  ctx.fillStyle = "#000000";
+  ctx.fillText("Lives: "+this.lives, 0, 20);
+  ctx.fillText("Score: "+this.score, canvas.width-100, 20);
 }
 
 
@@ -213,25 +112,22 @@ function keyUpHandler(e){
 }
 
 function collisionDetection(){
-  for (brick of bricks){
-    if (brick.status == 1){
-      if(isColliding(brick, ball.getRectangle())){
+  for (let i = 0; i < bricks.length; i++){
+      if(isColliding(bricks[i], ball.getRectangle())){
         gameState.score += 10;
-        brick.status = 0;
+        bricks.splice(i, 1);
         ball.changeDirVertical();
-        if (gameState.score/10 == brickRowCount*brickColumnCount){
+        if (bricks.length == 0){
           alert("YOU WIN, CONGRATULATIONS!");
           document.location.reload();
         }
-
       }
-    }
   }
 }
 
-function renderBricks(){
+function renderBricks(canvas, ctx){
   for (brick of bricks){
-    if (brick.status == 1) brick.render(canvas, ctx);
+    brick.render(canvas, ctx);
   }
 
 }
@@ -240,16 +136,19 @@ function renderBricks(){
 function run(){
     if(canvas.getContext){
         /*updates*/
-
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
         paddle.update(events);
         ball.update(events);
 
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         paddle.render(canvas, ctx);
         ball.render(canvas, ctx);
-        renderBricks();
+        renderBricks(canvas, ctx);
         gameState.render(canvas, ctx);
+
+/*
+        screenCtx.clearRect(0, 0, screen.width, screen.height);
+        gameState.render(screen, screenCtx);
+        screenCtx.drawImage(canvas, 0, 20);*/
 
         /*Collision detection*/
         collisionDetection(); //bricks detection
@@ -261,9 +160,9 @@ function run(){
 
         if(isColliding(ball.getRectangle(), paddle) && ball.dy == DIR_DOWN){
             if (ball.x > paddle.x + paddle.width/2){
-              ball.dx = DIR_RIGHT;
+              ball.setDirection("RIGHT");
             }
-            else ball.dx = DIR_LEFT;
+            else ball.setDirection("LEFT");
           ball.changeDirVertical();
         }
         else if (ball.y > canvas.height){
@@ -271,8 +170,8 @@ function run(){
               gameState.lives--;
               ball.x = canvas.width/2;
               ball.y = canvas.height -30;
-              ball.dx = DIR_RIGHT;
-              ball.dy = DIR_UP;
+              ball.setDirection("RIGHT");
+              ball.setDirection("UP");
               paddle.x = (canvas.width-paddle.width)/2;
             }
             else{
