@@ -1,12 +1,15 @@
 # freakout
 A breakout clone
 
-This game is based on a <a href = "https://developer.mozilla.org/en-US/docs/Games/Tutorials/2D_Breakout_game_pure_JavaScript">Mozilla's tutorial on how to make a 2d breakout clone using pure JS</a>. The code is being completely refactored.
+This project was based on a <a href = "https://developer.mozilla.org/en-US/docs/Games/Tutorials/2D_Breakout_game_pure_JavaScript">Mozilla's tutorial on how to make a 2d breakout clone using pure JS</a>, but the code is being almost completely rewritten.
 
 Some of the changes made up to now are:
 <ul>
-  <li>Encapsulation of entities of the game (in progress).</li>
-  <li>Better collision detection system.</li>
+  <li>Encapsulation of entities of the game.</li>
+  <li>Better (but still not that good) collision detection system.</li>
   <li>Changes in the mechanics of the interaction between ball and paddle.</li>
-  <li>Changes in the style and number of bricks.</li>
+  <li>Changes in the style and number of bricks per column and row.</li>
+  <li>A level system (in progress)</li>
+  <li>Extra canvas to show game info</li>
+  <li>Bricks are now loaded from image files</li> 
 </ul>
