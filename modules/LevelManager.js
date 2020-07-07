@@ -1,11 +1,37 @@
 class LevelManager{
   constructor(){
-    this.level = 1;
+    this.level = 0;
     this.bricks = [];
-    this.testImg = new Image();
-    this.testImg.src = "resources/img/2.png";
-    this.levels = [];
+    this.levels = [
+        [ 1, 1, 1, 1, 1,
+          1,-1,-1,-1, 1,
+          1,-1, 2,-1, 1,
+          1,-1, 2,-1, 1,
+          1,-1,-1,-1, 1,
+         -1,-1,-1,-1,-1,
+          0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0],
+
+          [2,2,2,2,2,
+          2,1,0,1,2,
+          2,0,1,0,2,
+          2,1,0,1,2,
+          2,0,1,0,2,
+          2,1,0,1,2,
+          2,0,1,0,2,
+          2,2,2,2,2],
+
+          []];
+
+    this.images = [];
+    for (let i = 0; i < BRICK_IMGS; i++){
+        let img = new Image();
+        img.src = `resources/img/${i}.png`;
+        this.images.push(img);
+    }
+
   }
+
 
   loadMaps(){
 
@@ -19,32 +45,44 @@ class LevelManager{
     }
   }
 
+
   initLevel(){
 
-    var brickRowCount = 10;
-    var brickColumnCount = 5;
-    var brickWidth = 320/5;
-    var brickHeight = 480/20;
+    var count = 0;
+      for (var r = 0; r < BRICK_ROWS; r++){
+    for (var c = 0; c < BRICK_COLS; c++){
 
-    for (var c = 0; c < brickColumnCount; c++){
-      for (var r = 0; r < brickRowCount; r++){
-        var brick = new Brick(x   = c * brickWidth,
-                          y       = r * brickHeight,
-                          height  = brickHeight,
-                          width   = brickWidth,
-                          color   = `rgb(${50+c*2}, 100, ${100+r*20})`);
+        /* -1 means the slot has no bricks*/
+        if (this.levels[this.level][count] == -1){
+          count++;
+          continue;
+        }
+        var brick = new Brick(c * BRICK_WIDTH, r * BRICK_HEIGHT, this.levels[this.level][count]);
+
         this.bricks.push(brick);
+        count++;
       }
     }
   }
 
   render(ctx){
     for (let brick of this.bricks){
-      ctx.drawImage(this.testImg, brick.x, brick.y);
-      //brick.render(ctx);
+      ctx.drawImage(this.images[brick.type], brick.x, brick.y, BRICK_WIDTH, BRICK_HEIGHT);
     }
-
   }
 
-
+  isLevelComplete(){
+    if (this.bricks.length == 0){
+      return true;
+    }
+    return false;
+  }
+/*TODO*/
+  nextLevel(){
+    if (this.level+1 < LEVELS_NUM){
+      this.level++;
+      return true;
+    }
+    return false;
+  }
 }

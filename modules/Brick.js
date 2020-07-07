@@ -1,21 +1,13 @@
 class Brick{
-  constructor(x, y, height, width, color){
+  constructor(x, y, type){
     this.x = x;
     this.y = y;
-    this.height = height;
-    this.width = width;
-    this.color = color;
-    this.status = 1;
-  }
+    this.type = type;
 
-  render(ctx){
-    ctx.beginPath();
-    ctx.rect(this.x, this.y, this.width, this.height);
-    ctx.strokeStyle = "#000000";
-    ctx.fillStyle = this.color;
-    ctx.fill();
-    ctx.stroke();
-    ctx.closePath();
+    /*These have to be defined for the Utils.isColliding
+    function to work*/
+    this.height = BRICK_HEIGHT;
+    this.width = BRICK_WIDTH;
   }
 
   update(foo){

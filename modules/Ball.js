@@ -1,14 +1,8 @@
-const START_SPEED = 2;
-
-const DIR_UP = -1;
-const DIR_DOWN = 1;
-const DIR_LEFT = -1;
-const DIR_RIGHT = 1;
-
-
 class Ball{
   constructor(x, y, radius, color){
     this.x = x;
+    this.startX = x;
+    this.startY = y;
     this.y = y;
     this.dx = DIR_RIGHT;
     this.dy = DIR_UP;
@@ -26,6 +20,10 @@ class Ball{
             height: radius *2};
   }
 
+  toStartPosition(){
+    this.x = this.startX;
+    this.y = this.startY;
+  }
   render(ctx){
     ctx.beginPath();
     ctx.fillStyle = "#ffffff";
@@ -68,13 +66,21 @@ class Ball{
   }
 
   checkWallCollision(canvas){
-    //sides detection
-    if (this.x > canvas.width - this.radius || this.x < this.radius){
-        this.changeDirHorizontal();
+    if (this.x >= canvas.width - this.radius){
+        return "RIGHT";
     }
+    if  (this.x <= this.radius){
+        return "LEFT";
+    }
+
     //top detection
-    if (this.y  < this.radius){
-        this.changeDirVertical();
+    if (this.y  <= this.radius){
+        return "TOP";
     }
+
+    if (this.y >= canvas.height){ //You're dead :/
+        return "BOTTOM";
+    }
+    return "NO";
   }
 }
