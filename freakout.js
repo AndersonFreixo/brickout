@@ -1,15 +1,9 @@
-const SCREEN_WIDTH = 320;
-const HEADER_HEIGHT = 20;
-const GAME_HEIGHT = 460;
-const PAD_HEIGHT = 10;
-const PAD_WIDTH = 75;
-const BALL_RAD = 10;
-const START_LIVES = 3;
-
+/*Handlers are on the end of the file!*/
 document.addEventListener("mousemove", mouseMoveHandler, false);
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 
+/*This is the DIV where the two canvas are put*/
 let screenDiv = document.getElementById("screen");
 
 /*headerCanvas shows game info*/
@@ -21,7 +15,7 @@ headerCanvas.width = SCREEN_WIDTH;
 
 screenDiv.appendChild(headerCanvas);
 
-/*canvas is where the game graphics are rendered*/
+/*"canvas" is where the game graphics are rendered*/
 let canvas = document.createElement("canvas");
 let ctx = canvas.getContext("2d");
 canvas.style.cursor = "None";
@@ -30,6 +24,7 @@ canvas.width = SCREEN_WIDTH;
 
 screenDiv.appendChild(canvas);
 
+/*Entities*/
 let paddle = new Paddle(x       = (canvas.width - PAD_WIDTH)/2,
                         y       = canvas.height - PAD_HEIGHT,
                         height  = PAD_HEIGHT,
@@ -41,25 +36,13 @@ let ball = new Ball(x       = canvas.width/2,
                     radius  = BALL_RAD,
                     color   = `rgb(230, 0, 5)`);
 
-let events = {rightPressed: false, leftPressed: false, relativeX: 0};
-let gameState = {lives: START_LIVES, score: 0};
+/*levelManager manages bricks rendering and info.*/
 let levelManager = new LevelManager();
 levelManager.initLevel();
 
-gameState.render = function(ctx){
-  ctx.beginPath();
-  ctx.fillStyle = "#000000";
-  ctx.rect(0, 0, SCREEN_WIDTH, 20);
-  ctx.fill();
-  ctx.font = "bold 16px Arial";
-  ctx.fillStyle = "#FFFFFF";
-  ctx.fillText("Score: "+this.score, 0, 20);
-  ctx.fillText("Lives: "+this.lives, SCREEN_WIDTH-80, 20);
-  ctx.closePath();
+let gameState = new GameState;
 
-}
-
-
+let events = {rightPressed: false, leftPressed: false, relativeX: 0};
 
 function run(){
     if(canvas.getContext){
@@ -67,6 +50,9 @@ function run(){
         paddle.update(events);
         ball.update(events);
 
+        /*Rendering
+        *All game entities are rendered in "canvas"
+        and the game state is rendered apart in headerCanvas*/
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         paddle.render(ctx);
         ball.render(ctx);
@@ -77,26 +63,34 @@ function run(){
         if (levelManager.checkCollision(ball)){
             gameState.score += 10;
             ball.changeDirVertical();
-            if (levelManager.bricks.length == 0){
+
+            /*PUT THIS INSIDE LEVEL MANAGER UPDATER!*/
+            if (levelManager.isLevelComplete()){
+              if(!levelManager.nextLevel()){
                 alert("YOU WIN, CONGRATULATIONS!");
                 document.location.reload();
+              }
+              else{
+                levelManager.initLevel();
+                ball.toStartPosition();
+              }
             }
         }
 
         /*ball detection*/
-        ball.checkWallCollision(canvas);
-
-        //bottom detection
-
-        if(Utils.isColliding(ball.getRectangle(), paddle) && ball.dy == DIR_DOWN){
-            if (ball.x > paddle.x + paddle.width/2){
-              ball.setDirection("RIGHT");
-            }
-            else ball.setDirection("LEFT");
-          ball.changeDirVertical();
-        }
-        else if (ball.y > canvas.height){
-            if (gameState.lives > 0){
+        let col = ball.checkWallCollision(canvas).toUpperCase();
+        switch(col){
+          case ("RIGHT"):
+            ball.setDirection("LEFT");
+            break;
+          case ("LEFT"):
+            ball.setDirection("RIGHT");
+            break;
+          case ("TOP"):
+            ball.setDirection("DOWN");
+            break;
+          case ("BOTTOM"):
+            if (gameState.lives >= 1){
               gameState.lives--;
               ball.x = canvas.width/2;
               ball.y = canvas.height -30;
@@ -108,7 +102,19 @@ function run(){
               alert("Game Over!!!");
               location.reload();
             }
+            break;
         }
+
+
+        //bottom detection
+        if(Utils.isColliding(ball.getRectangle(), paddle) && ball.dy == DIR_DOWN){
+            if (ball.x > paddle.x + paddle.width/2){
+              ball.setDirection("RIGHT");
+            }
+            else ball.setDirection("LEFT");
+          ball.changeDirVertical();
+        }
+
     }
     else{
         document.write("Oooops, no canvas!");
