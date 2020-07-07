@@ -26,7 +26,7 @@ class Ball{
             height: radius *2};
   }
 
-  render(canvas, ctx){
+  render(ctx){
     ctx.beginPath();
     ctx.fillStyle = "#ffffff";
     ctx.strokeStyle = "#000000";

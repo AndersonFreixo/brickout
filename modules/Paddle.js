@@ -7,7 +7,7 @@ class Paddle{
     this.color = color;
   }
 
-  render(canvas, ctx){
+  render(ctx){
     ctx.beginPath();
     ctx.rect(this.x, this.y, this.width, this.height);
     ctx.fillStyle = this.color;

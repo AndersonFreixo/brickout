@@ -8,7 +8,7 @@ class Brick{
     this.status = 1;
   }
 
-  render(canvas, ctx){
+  render(ctx){
     ctx.beginPath();
     ctx.rect(this.x, this.y, this.width, this.height);
     ctx.strokeStyle = "#000000";
