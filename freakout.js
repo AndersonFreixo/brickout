@@ -24,6 +24,11 @@ canvas.width = SCREEN_WIDTH;
 
 screenDiv.appendChild(canvas);
 
+let wallpaper = new Image();
+wallpaper.src = `resources/img/wallpaper.png`;
+
+
+
 /*Entities*/
 let paddle = new Paddle(x       = (canvas.width - PAD_WIDTH)/2,
                         y       = canvas.height - PAD_HEIGHT,
@@ -53,7 +58,8 @@ function run(){
         /*Rendering
         *All game entities are rendered in "canvas"
         and the game state is rendered apart in headerCanvas*/
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(wallpaper, 0, 0, SCREEN_WIDTH, GAME_HEIGHT);
+        //ctx.clearRect(0, 0, canvas.width, canvas.height);
         paddle.render(ctx);
         ball.render(ctx);
         levelManager.render(ctx);
