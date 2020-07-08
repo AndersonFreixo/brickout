@@ -2,6 +2,7 @@ const START_LIVES = 3;
 const BRICK_ROWS = 8;
 const BRICK_COLS = 5;
 const LEVELS_NUM = 2;
+
 /*Canvas properties*/
 const SCREEN_WIDTH = 320;
 const HEADER_HEIGHT = 20;
@@ -13,7 +14,7 @@ const BRICK_WIDTH = 64;
 const BRICK_IMGS = 3;   //Ammount of brick images to be loaded.
 
 /*Paddle properties*/
-const PAD_HEIGHT = 10;
+const PAD_HEIGHT = 15;
 const PAD_WIDTH = 75;
 
 /*Ball related constants*/

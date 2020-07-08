@@ -78,7 +78,7 @@ class Ball{
         return "TOP";
     }
 
-    if (this.y >= canvas.height){ //You're dead :/
+    if (this.y + this.radius >= canvas.height){ //You're dead :/
         return "BOTTOM";
     }
     return "NO";
