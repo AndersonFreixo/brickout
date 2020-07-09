@@ -2,26 +2,7 @@ class LevelManager{
   constructor(){
     this.level = 0;
     this.bricks = [];
-    this.levels = [
-        [ 1, 1, 1, 1, 1,
-          1,-1,-1,-1, 1,
-          1,-1, 2,-1, 1,
-          1,-1, 2,-1, 1,
-          1,-1,-1,-1, 1,
-         -1,-1,-1,-1,-1,
-          0, 0, 0, 0, 0,
-          0, 0, 0, 0, 0],
-
-          [2,2,2,2,2,
-          2,1,0,1,2,
-          2,0,1,0,2,
-          2,1,0,1,2,
-          2,0,1,0,2,
-          2,1,0,1,2,
-          2,0,1,0,2,
-          2,2,2,2,2],
-
-          []];
+    this.levels = levels;
 
     this.images = [];
     for (let i = 0; i < BRICK_IMGS; i++){
@@ -33,16 +14,50 @@ class LevelManager{
   }
 
 
-  loadMaps(){
-
-  }
   checkCollision(ball){
+    let ballRect = ball.getRectangle();
+    let touching = "";
     for (let i = 0; i < this.bricks.length; i++){
-        if(Utils.isColliding(this.bricks[i], ball.getRectangle())){
-          this.bricks.splice(i, 1);
-          return true;
+      let brick = this.bricks[i];
+      /*Is the center of the ball contained in the X-range of the brick?*/
+      if(ball.x >= brick.x && ball.x <= brick.x+brick.width){
+        /*Is the ball touching the top of the brick?*/
+        if(ballRect.y+ballRect.height >= brick.y
+            && ballRect.y+ballRect.height < brick.y+brick.height){
+          touching += "V";
         }
+        /*Is the ball touching the bottom of the brick?*/
+        if (ballRect.y <= brick.y+brick.height &&
+            ballRect.y > brick.y){
+          touching += "V";
+        }
+      }
+      /*Is the ball in one of the corners of the brick?*/
+      if (ball.y >= brick.y && ball.y <= brick.y+brick.height){
+        /*
+        [Since the ball may go inside the brick without touching it first
+        (ball edge == brick position) because of the speed of the ball,
+        which may increment the coordinates in more than 1 pixel per turn,
+        the ball radius is used as a threshold value to evaluate
+        how much "inside the brick" is still considered the edge of the brick]*/
+
+        /*Is it on the left corner?*/
+        if (ballRect.x+ballRect.width >= brick.x
+          && ballRect.x+ballRect.width-brick.x < ball.radius){
+            touching += "S";
+        }
+        /*Is it on the right corner?*/
+        if (ballRect.x <= brick.x + brick.width
+          &&  ball.x >= brick.x + brick.width){
+            touching += "S";
+        }
+      }
+      if (touching != ""){
+        this.bricks.splice(i, 1);
+        return touching;
+      }
     }
+    return touching;
   }
 
 
