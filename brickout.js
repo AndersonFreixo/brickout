@@ -30,6 +30,9 @@ wallpaper.src = `resources/img/wallpaper.png`;
 
 
 /*Entities*/
+
+let audioManager = new AudioManager();
+
 let paddle = new Paddle(x       = (canvas.width - PAD_WIDTH)/2,
                         y       = canvas.height - PAD_HEIGHT,
                         height  = PAD_HEIGHT,
@@ -59,18 +62,25 @@ function run(){
         *All game entities are rendered in "canvas"
         and the game state is rendered apart in headerCanvas*/
         ctx.drawImage(wallpaper, 0, 0, SCREEN_WIDTH, GAME_HEIGHT);
-        //ctx.clearRect(0, 0, canvas.width, canvas.height);
         paddle.render(ctx);
         ball.render(ctx);
         levelManager.render(ctx);
         gameState.render(headerCtx);
 
         /*Collision detection*/
-        if (levelManager.checkCollision(ball)){
-            gameState.score += 10;
-            ball.changeDirVertical();
+        let touching = levelManager.checkCollision(ball);
 
-            /*PUT THIS INSIDE LEVEL MANAGER UPDATER!*/
+        if (touching != ""){
+            audioManager.playSound("brickHit");
+            gameState.score += 10;
+            if (touching.includes("V")){
+              ball.changeDirVertical();
+            }
+            if (touching.includes("S")){
+              ball.changeDirHorizontal();
+            }
+
+
             if (levelManager.isLevelComplete()){
               if(!levelManager.nextLevel()){
                 alert("YOU WIN, CONGRATULATIONS!");
@@ -85,6 +95,9 @@ function run(){
 
         /*ball detection*/
         let col = ball.checkWallCollision(canvas).toUpperCase();
+    //    if(col == "RIGHT" || col == "LEFT" || col == "TOP"){
+    //      audioManager.playSound("wallHit");
+    //    }
         switch(col){
           case ("RIGHT"):
             ball.setDirection("LEFT");
@@ -112,8 +125,9 @@ function run(){
         }
 
 
-        //bottom detection
         if(Utils.isColliding(ball.getRectangle(), paddle) && ball.dy == DIR_DOWN){
+            audioManager.playSound("paddleHit");
+
             if (ball.x > paddle.x + paddle.width/2){
               ball.setDirection("RIGHT");
             }
