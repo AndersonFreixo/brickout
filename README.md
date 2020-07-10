@@ -14,3 +14,9 @@ Some of the changes made up to now are:
   <li>Objects are now loaded from image files instead of being drawn in each loop.</li> 
   <li>Some sound effects.</li>
 </ul>
+
+Updates:
+<ul>
+  <li>07/09/2020 - Implementation of an initial screen with a button to start the game.</li>
+  <li>07/08/2020 - Implementation of an audio system with multiple channels.</li>
+</ul>
