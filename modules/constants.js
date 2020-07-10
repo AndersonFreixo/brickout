@@ -19,7 +19,7 @@ const PAD_WIDTH = 75;
 
 /*Ball related constants*/
 const BALL_RAD = 8;
-const START_SPEED = 3;
+const START_SPEED = 4;
 const DIR_UP = -1;
 const DIR_DOWN = 1;
 const DIR_LEFT = -1;

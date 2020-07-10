@@ -4,22 +4,21 @@ audio file, a switcher with "channelsNum" instances of the same audio file is cr
 and each time this audio is requested, the current available "channel" is played
 and the internal counter "index" is incremented. Making the audio ready to be
 played again.
-This idea was extracted from Tim Cotton's article:
+This idea was extracted from a Tim Cotton's article:
 https://blog.cotten.io/playing-audio-resources-simultaneously-in-javascript-546ec4d6216a
-My implementation is slightly different though.*/
+(My implementation is slightly different though.)*/
 
 
 class AudioManager{
   constructor(){
 
     this.switchers = [];
-    this.channelsNum = 4;
 
-  //  this.brickHit = new Audio("resources/audio/brick_hit.wav");
-    this.switchers["brickHit"] = this.createSwitcher("resources/audio/brick_hit.wav", this.channelsNum);
-    this.switchers["paddleHit"] = this.createSwitcher("resources/audio/paddle_hit.wav", this.channelsNum);
   }
 
+  loadToSwitcher(name, src, cn){
+    this.switchers[name] = this.createSwitcher(src, cn);
+  }
 
   createSwitcher(src, cn){
     let channels = [];
