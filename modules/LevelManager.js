@@ -15,6 +15,10 @@ class LevelManager{
 
 
   checkCollision(ball){
+    /*The reason why top and bottom collision are dealt separately but
+    return the same value is that in the future this information
+    might be important in the implementation of other game features!*/
+
     let ballRect = ball.getRectangle();
     let touching = "";
     for (let i = 0; i < this.bricks.length; i++){

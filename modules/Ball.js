@@ -73,7 +73,6 @@ class Ball{
         return "LEFT";
     }
 
-    //top detection
     if (this.y  <= this.radius){
         return "TOP";
     }

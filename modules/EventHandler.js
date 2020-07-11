@@ -1,28 +1,61 @@
 class EventHandler{
   constructor(canvas){
-    this.events = {rightPressed: false, leftPressed: false, relativeX: 0};
+
+    this.events = {activeLoop: "start",
+                  rightPressed: false,
+                  leftPressed: false,
+                  relativeX: 0,
+                  relativeY:0,
+                  mouseClick: false};
+
     this.canvas = canvas;
+    /*Handlers are on the end of the file!*/
+    document.addEventListener("mousemove",
+                               e => this.mouseMoveHandler(e, this.events, this.canvas),
+                               false);
+
+    document.addEventListener("keydown",
+                              e => this.keyDownHandler(e, this.events),
+                              false);
+
+    document.addEventListener("keyup",
+                              e => this.keyUpHandler(e, this.events),
+                              false);
+
+    document.addEventListener("click",
+                              e => this.mouseClickHandler(e, this.events, this.canvas),
+                              false);
+
+
   }
 
-  mouseMove(e){
+  mouseClickHandler(e, events, canvas){
+    let x = e.clientX - canvas.offsetLeft;
+    let y = e.clientY - canvas.offsetTop;
+    events.mouseClick = true;
+  }
+
+
+  mouseMoveHandler(e, events, canvas){
     events.relativeX = e.clientX - canvas.offsetLeft;
+    events.relativeY = e.clientY - canvas.offsetTop;
   }
 
-  keyDown(e){
-      if (e.key == "Right" || e.key == "ArrowRight"){
-          events.rightPressed = true;
-      }
-      else if(e.key == "Left" || e.key == "ArrowLeft"){
-          events.leftPressed = true;
-      }
+  keyDownHandler(e, events){
+    if (e.key == "Right" || e.key == "ArrowRight"){
+        events.rightPressed = true;
+    }
+    else if(e.key == "Left" || e.key == "ArrowLeft"){
+        events.leftPressed = true;
+    }
   }
-  keyUp(e){
-      if (e.key == "Right" || e.key == "ArrowRight"){
-          events.rightPressed = false;
-      }
-      else if (e.key == "Left" || e.key == "ArrowLeft"){
-          events.leftPressed = false;
-      }
+  keyUpHandler(e, events){
+    if (e.key == "Right" || e.key == "ArrowRight"){
+        events.rightPressed = false;
+    }
+    else if (e.key == "Left" || e.key == "ArrowLeft"){
+        events.leftPressed = false;
+    }
   }
 
 }

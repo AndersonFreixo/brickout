@@ -1,12 +1,11 @@
 class Paddle{
-  constructor(x, y, height, width, color){
+  constructor(x, y, height, width, image){
     this.x = x;
     this.y = y;
     this.height = height;
     this.width = width;
     this.color = color;
-    this.image = new Image();
-    this.image.src = "resources/img/paddle.png"
+    this.image = image;
   }
 
   render(ctx){

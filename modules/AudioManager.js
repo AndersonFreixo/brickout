@@ -31,7 +31,7 @@ class AudioManager{
   playSound(name){
     let switcher = this.switchers[name];
     switcher.channels[switcher.index].play();
-    console.log("Playing channel " + switcher.index);
+    //console.log("Playing channel " + switcher.index);
     if (switcher.index +1< switcher.channelsNumber){
       switcher.index++;
     }
