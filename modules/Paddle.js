@@ -4,27 +4,37 @@ class Paddle{
     this.y = y;
     this.height = height;
     this.width = width;
-    this.color = color;
     this.image = image;
   }
 
   render(ctx){
-    ctx.drawImage(this.image, this.x, this.y, PAD_WIDTH, PAD_HEIGHT);
-    /*
-    ctx.beginPath();
-    ctx.rect(this.x, this.y, this.width, this.height);
-    ctx.fillStyle = this.color;
-    ctx.strokeStyle = "#000000";
-    ctx.fill();
-    ctx.stroke();
-    ctx.closePath();*/
+    ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
   }
 
   update(e){
-    if (e.relativeX > 0 && e.relativeX < canvas.width){
-      this.x = e.relativeX - this.width/2;
+    if (e.relativeX >= this.width/2){
+      if (e.relativeX <= canvas.width-this.width/2){
+        this.x = e.relativeX - this.width/2;
+      }
+      else this.x = canvas.width -this.width;
+    }
+    else{
+      this.x = 0;
     }
     if (e.rightPressed == true) this.x += 7;
     if (e.leftPressed == true) this.x -= 7;
   }
+
+  /*entity must be an object with x, y, height and width properties.
+    Returns a real number from 0 to 1 representing the touched part
+    of the paddle, which would be ((entity.x+entity.width)/2) - paddle.x,
+    in relation to the total size of the paddle, or returns -1
+    if entity didn't touch the paddle.*/
+  hasTouched(entity){
+      if(entity.x+entity.width/2 >= this.x && entity.x+entity.width/2 <= this.x + this.width &&
+        entity.y+entity.height >= this.y && entity.y+entity.height <= this.y+this.height/2){
+          return ((entity.x+entity.width/2) - this.x)/this.width;
+      }
+      else return -1;
+    }
 }

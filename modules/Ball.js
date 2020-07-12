@@ -4,8 +4,8 @@ class Ball{
     this.startX = x;
     this.startY = y;
     this.y = y;
-    this.dx = DIR_RIGHT;
-    this.dy = DIR_UP;
+    this.dx = 0.5;
+    this.dy = -0.5;
     this.speed = START_SPEED;
     this.radius = radius;
     this.color = color;
@@ -47,24 +47,14 @@ class Ball{
     this.dy = -this.dy;
   }
 
-  setDirection(dir){
-    dir = dir.toUpperCase();
-    switch(dir){
-      case("UP"):
-        this.dy = DIR_UP;
-        break;
-      case("DOWN"):
-        this.dy = DIR_DOWN;
-        break;
-      case("LEFT"):
-        this.dx = DIR_LEFT;
-        break;
-      case("RIGHT"):
-        this.dx = DIR_RIGHT;
-        break;
-    }
+  processDirection(position){
+    /*turns a number between 0 and 1 in a number between -1 and 1*/
+    let xchange = (position-0.5)*(8/5);
+    this.dx = xchange;
+    this.dy = -1 + Math.abs(xchange);
+    if (this.dy < -0.8) this.dy = -0.8;
+    if (this.dy > -0.2) this.dy = -0.2;
   }
-
   checkWallCollision(canvas){
     if (this.x >= canvas.width - this.radius){
         return "RIGHT";

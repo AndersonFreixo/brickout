@@ -6,7 +6,10 @@ class EventHandler{
                   leftPressed: false,
                   relativeX: 0,
                   relativeY:0,
-                  mouseClick: false};
+                  mouseClick: false,
+                  pause: false,
+                  shoot: false
+                 };
 
     this.canvas = canvas;
     /*Handlers are on the end of the file!*/
@@ -48,7 +51,15 @@ class EventHandler{
     else if(e.key == "Left" || e.key == "ArrowLeft"){
         events.leftPressed = true;
     }
+    else if(e.key == "Enter"){
+      if (events.pause == false){
+        events.pause = true;
+      }
+      else if (events.pause == true){
+        events.pause = false;
+      }
   }
+}
   keyUpHandler(e, events){
     if (e.key == "Right" || e.key == "ArrowRight"){
         events.rightPressed = false;
@@ -56,6 +67,9 @@ class EventHandler{
     else if (e.key == "Left" || e.key == "ArrowLeft"){
         events.leftPressed = false;
     }
+  //  else if (e.key == "Enter"){
+  //    events.pause = false;
+  //  }
   }
 
 }
