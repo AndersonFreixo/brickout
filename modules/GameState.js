@@ -2,6 +2,7 @@ class GameState{
   constructor(){
     this.lives = START_LIVES;
     this.score = 0;
+    this.elapsed = 0;
   }
 
   render(ctx){
@@ -13,8 +14,15 @@ class GameState{
     ctx.fillStyle = "#FFFFFF";
     ctx.fillText("Score: "+this.score, 0, 20);
     ctx.fillText("Lives: "+this.lives, SCREEN_WIDTH-80, 20);
+    let elapsedSecs = this.elapsed/1000;
+    ctx.fillText("Time: "+ elapsedSecs.toFixed(0), 150, 20);
     ctx.closePath();
 
+  }
+  reset(){
+    this.lives = START_LIVES;
+    this.score = 0;
+    this.elapsed = 0;
   }
 
 }

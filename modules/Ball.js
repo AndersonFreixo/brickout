@@ -23,6 +23,8 @@ class Ball{
   toStartPosition(){
     this.x = this.startX;
     this.y = this.startY;
+    this.dx = 0.5;
+    this.dy = -0.5;
   }
   render(ctx){
     ctx.beginPath();
@@ -49,27 +51,31 @@ class Ball{
 
   processDirection(position){
     /*turns a number between 0 and 1 in a number between -1 and 1*/
-    let xchange = (position-0.5)*(8/5);
+    let xchange = (position-0.5)*2;
     this.dx = xchange;
     this.dy = -1 + Math.abs(xchange);
     if (this.dy < -0.8) this.dy = -0.8;
     if (this.dy > -0.2) this.dy = -0.2;
   }
-  checkWallCollision(canvas){
+  isTouchingWall(canvas){
     if (this.x >= canvas.width - this.radius){
-        return "RIGHT";
+        this.changeDirHorizontal();
+        return "right";
     }
     if  (this.x <= this.radius){
-        return "LEFT";
+        this.changeDirHorizontal();
+        return "left";
     }
 
     if (this.y  <= this.radius){
-        return "TOP";
+        this.changeDirVertical();
+        this.y = this.radius;
+        return "top";
     }
 
     if (this.y + this.radius >= canvas.height){ //You're dead :/
-        return "BOTTOM";
+        return "bottom";
     }
-    return "NO";
+    return "not";
   }
 }

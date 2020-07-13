@@ -104,4 +104,8 @@ class LevelManager{
     }
     return false;
   }
+  reset(){
+    this.bricks = [];
+    this.level = 0;
+  }
 }

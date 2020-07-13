@@ -1,6 +1,6 @@
 /*The switcher object is used to overcome the fact that the same audio file
 cannot be played again until the current execution is done. So, for each
-audio file, a switcher with "channelsNum" instances of the same audio file is created
+audio file a switcher with "channelsNum" instances of the same audio file is created
 and each time this audio is requested, the current available "channel" is played
 and the internal counter "index" is incremented. Making the audio ready to be
 played again.
